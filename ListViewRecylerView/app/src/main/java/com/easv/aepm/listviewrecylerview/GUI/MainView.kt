@@ -36,7 +36,7 @@ class MainView : AppCompatActivity(), IClickItemListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
+        inflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
@@ -47,27 +47,6 @@ class MainView : AppCompatActivity(), IClickItemListener {
                 openCreateActivity(); true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onCreateContextMenu(
-            menu: ContextMenu,
-            v: View,
-            menuInfo: ContextMenu.ContextMenuInfo
-    ) {
-        super.onCreateContextMenu(menu, v, menuInfo)
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        return when (item.itemId) {
-            R.id.create_friend -> {
-                Toast.makeText(this, "TEST", Toast.LENGTH_SHORT).show()
-                true
-            }
-            else -> super.onContextItemSelected(item)
         }
     }
 
@@ -91,18 +70,17 @@ class MainView : AppCompatActivity(), IClickItemListener {
     override fun onItemLongClick(friend: BEFriend, position: Int, view: View) {
 
         val popup = PopupMenu(this, view)
-        popup.inflate(R.menu.menu_recyclerview);
+        popup.inflate(R.menu.context_menu);
 
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.call_friend -> {
-                    Toast.makeText(this, "HELLO", Toast.LENGTH_SHORT).show()
                     var intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:(+45)${friend.number}"))
                     startActivity(intent);
                     true
                 }
                 R.id.text_friend -> {
-                    Toast.makeText(this, "HELLO", Toast.LENGTH_SHORT).show(); true
+                    true
                 }
                 else -> false
             }

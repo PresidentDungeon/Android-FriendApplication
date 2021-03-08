@@ -1,8 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/call_friend"
-        android:icon="@drawable/plus"
         android:title="Call Friend" />
     <item android:id="@+id/text_friend"
-        android:icon="@drawable/plus"
         android:title="Text Friend" />
 </menu>
