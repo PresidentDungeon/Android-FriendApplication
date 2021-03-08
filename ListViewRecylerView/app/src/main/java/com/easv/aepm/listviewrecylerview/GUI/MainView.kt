@@ -84,7 +84,6 @@ class MainView : AppCompatActivity(), IClickItemListener {
                 }
                 else -> false
             }
-
         }
 
         popup.show()

@@ -1,6 +1,7 @@
 package com.easv.aepm.listviewrecylerview.GUI
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.View
@@ -38,8 +39,15 @@ class DetailActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { validateFriend() }
         })
 
-        if(intent.extras == null){
+        imgCallFriend.setOnClickListener { view ->
+            var intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:(+45)${friend.number}"))
+            startActivity(intent);
+         }
 
+
+
+        if(intent.extras == null){
+            imgCallFriend.isVisible = false
         }
         else{
             btnCreate.isVisible = false
