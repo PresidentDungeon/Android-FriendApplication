@@ -66,13 +66,11 @@ class RecyclerHolder(view: View) : RecyclerView.ViewHolder(view) {
     val view: View = view
     val nameText: TextView = view.findViewById(R.id.name)
     val aliasText: TextView = view.findViewById(R.id.alias)
-    val phoneText: TextView = view.findViewById(R.id.phone)
     val imageView: ImageView = view.findViewById(R.id.imgFavoriteExt)
 
     fun bind(friend: BEFriend){
         this.nameText.text = friend.name
         this.aliasText.text = "(${friend.alias})"
-        this.phoneText.text = friend.number
         this.friend = friend;
         this.imageView.setImageResource(if (friend.isFavorite) R.drawable.ok else R.drawable.notok)
     }

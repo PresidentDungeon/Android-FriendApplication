@@ -34,22 +34,4 @@
         android:layout_marginLeft="30px"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="40px"
-        android:layout_gravity="center"
-        android:text=" - "/>
-
-    <TextView
-        android:id="@+id/phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PHONE"
-        android:textStyle="bold"
-        android:textColor="@color/phoneColor"
-        android:textSize="25px"
-        android:layout_gravity="center"
-        />
-
 </LinearLayout>
