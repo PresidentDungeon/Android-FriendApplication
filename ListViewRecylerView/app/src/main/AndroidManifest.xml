@@ -13,8 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ListViewRecylerView">
 
-        <activity android:name=".GUI.MainActivity" />
-        <activity android:name=".GUI.MainActivity2" />
         <activity android:name=".GUI.DetailActivity" />
         <activity android:name=".GUI.MainView">
             <intent-filter>
