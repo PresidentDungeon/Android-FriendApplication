@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -23,8 +25,7 @@ class DetailActivity : AppCompatActivity() {
     lateinit var friend: BEFriend
     val myCalendar: Calendar = Calendar.getInstance()
 
-    var date =
-        OnDateSetListener { view, year, monthOfYear, dayOfMonth -> // TODO Auto-generated method stub
+    var date = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             myCalendar[Calendar.YEAR] = year
             myCalendar[Calendar.MONTH] = monthOfYear
             myCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
@@ -55,7 +56,7 @@ class DetailActivity : AppCompatActivity() {
         imgTextFriend.setOnClickListener { view -> var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${friend.number}")); startActivity(intent);}
         imgMailFriend.setOnClickListener { view -> sendMail()}
         imgLinkFriend.setOnClickListener { view -> goToLink()}
-        tvBirthday.setOnClickListener { view -> openPopup()}
+        tvBirthday.setOnTouchListener { v, event -> if(event.action == MotionEvent.ACTION_UP){openPopup()}; true }
 
         tvLink.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -152,7 +153,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun updateLabel() {
-        val myFormat = "dd/MM/yy" //In which you need put here
+        val myFormat = "dd/MM/YYYY" //In which you need put here
         val sdf = SimpleDateFormat(myFormat, Locale.GERMAN)
         tvBirthday.setText(sdf.format(myCalendar.time))
     }
