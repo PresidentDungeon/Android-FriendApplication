@@ -1,5 +1,6 @@
 package com.easv.aepm.listviewrecylerview.data
 
+import android.util.Log
 import java.util.*
 
 class FriendRepository {
@@ -17,7 +18,7 @@ class FriendRepository {
         )
 
     fun addFriend(friend: BEFriend){
-        friend.id = id++;
+        friend.id = ++id
         this.friends.add(friend)
     }
 
