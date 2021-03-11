@@ -1,9 +1,12 @@
 package com.easv.aepm.listviewrecylerview.GUI
 
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -11,13 +14,22 @@ import com.easv.aepm.listviewrecylerview.R
 import com.easv.aepm.listviewrecylerview.data.BEFriend
 import com.easv.aepm.listviewrecylerview.data.IntentValues
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.cell.view.*
-import android.text.TextWatcher as TextWatcher
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DetailActivity : AppCompatActivity() {
 
     lateinit var friend: BEFriend
+    val myCalendar: Calendar = Calendar.getInstance()
+
+    var date =
+        OnDateSetListener { view, year, monthOfYear, dayOfMonth -> // TODO Auto-generated method stub
+            myCalendar[Calendar.YEAR] = year
+            myCalendar[Calendar.MONTH] = monthOfYear
+            myCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+            updateLabel()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +55,7 @@ class DetailActivity : AppCompatActivity() {
         imgTextFriend.setOnClickListener { view -> var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${friend.number}")); startActivity(intent);}
         imgMailFriend.setOnClickListener { view -> sendMail()}
         imgLinkFriend.setOnClickListener { view -> goToLink()}
+        tvBirthday.setOnClickListener { view -> openPopup()}
 
         tvLink.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -129,6 +142,19 @@ class DetailActivity : AppCompatActivity() {
         if (!url!!.startsWith("http://") && !url.startsWith("https://")){url = "http://" + url}
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse("${url}"))
         startActivity(intent)
+    }
+
+    fun openPopup(){
+        DatePickerDialog(
+            this, date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH],
+            myCalendar[Calendar.DAY_OF_MONTH]
+        ).show()
+    }
+
+    private fun updateLabel() {
+        val myFormat = "dd/MM/yy" //In which you need put here
+        val sdf = SimpleDateFormat(myFormat, Locale.GERMAN)
+        tvBirthday.setText(sdf.format(myCalendar.time))
     }
 
 }
