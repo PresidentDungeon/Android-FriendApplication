@@ -4,14 +4,14 @@ class FriendRepository {
 
     private var id: Int = 8
     private val friends: MutableList<BEFriend> = mutableListOf<BEFriend>(
-        BEFriend(1,"Anders","42435049","AEPM", true),
-        BEFriend(2,"Kim","21218214", "KHB", true),
-        BEFriend(3,"Lars","32554788", "LVPH",true),
-        BEFriend(4,"Hassan","52515333", "HOM",true),
-        BEFriend(5,"Henrik","21211082", "HDM",false),
-        BEFriend(6,"Nikolaj","31311082", "LPH",true),
-        BEFriend(7,"Jacob","42410210", "JLV",true),
-        BEFriend(8,"Martin","42435049", "MLV",false),
+        BEFriend(1,"Anders","42435049","AEPM@hotmail.com", true, "WWW.EUROPARK.DK"),
+        BEFriend(2,"Kim","21218214", "KHB", true, ""),
+        BEFriend(3,"Lars","32554788", "LVPH",true,""),
+        BEFriend(4,"Hassan","52515333", "HOM",true,""),
+        BEFriend(5,"Henrik","21211082", "HDM",false,""),
+        BEFriend(6,"Nikolaj","31311082", "LPH",true,"lenschow.dk"),
+        BEFriend(7,"Jacob","42410210", "JLV",true,""),
+        BEFriend(8,"Martin","42435049", "MLV",false,""),
         )
 
     fun addFriend(friend: BEFriend){

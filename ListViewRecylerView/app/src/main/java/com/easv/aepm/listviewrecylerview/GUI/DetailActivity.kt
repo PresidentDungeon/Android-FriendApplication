@@ -28,7 +28,7 @@ class DetailActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { validateFriend() }
         })
-        tvAlias.addTextChangedListener(object : TextWatcher {
+        tvMail.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { validateFriend() }
@@ -44,7 +44,11 @@ class DetailActivity : AppCompatActivity() {
             startActivity(intent);
          }
 
-
+        tvLink.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { validateFriend() }
+        })
 
         if(intent.extras == null){
             imgCallFriend.isVisible = false
@@ -58,7 +62,7 @@ class DetailActivity : AppCompatActivity() {
     }
 
     fun validateFriend(){
-        if(tvName.text.isNotEmpty() && tvAlias.text.isNotEmpty() && tvNumber.text.isNotEmpty()){
+        if(tvName.text.isNotEmpty() && tvMail.text.isNotEmpty() && tvNumber.text.isNotEmpty()){
             btnCreate.isEnabled = true
             btnUpdate.isEnabled = true
         }
@@ -70,7 +74,7 @@ class DetailActivity : AppCompatActivity() {
 
     fun initializeText(friend: BEFriend){
         tvName.setText(friend.name)
-        tvAlias.setText(friend.alias)
+        tvMail.setText(friend.mail)
         tvNumber.setText(friend.number)
         isFavorite.isChecked = friend.isFavorite
     }
@@ -78,10 +82,11 @@ class DetailActivity : AppCompatActivity() {
 
     fun createCustomer(view: View) {
         val name = tvName.text.toString()
-        val alias = tvAlias.text.toString()
+        val mail = tvMail.text.toString()
         val number = tvNumber.text.toString()
+        val url = tvLink.text.toString()
         val isFavorite = isFavorite.isChecked
-        val friend = BEFriend(0, name, number, alias, isFavorite)
+        val friend = BEFriend(0, name, number, mail, isFavorite, url)
 
         val intent = Intent()
         intent.putExtra("FRIEND_CREATE", friend)
@@ -91,8 +96,9 @@ class DetailActivity : AppCompatActivity() {
 
     fun updateCustomer(view: View) {
         friend.name = tvName.text.toString()
-        friend.alias = tvAlias.text.toString()
+        friend.mail = tvMail.text.toString()
         friend.number = tvNumber.text.toString()
+        friend.url = tvLink.text.toString()
         friend.isFavorite = isFavorite.isChecked
 
         val intent = Intent()
