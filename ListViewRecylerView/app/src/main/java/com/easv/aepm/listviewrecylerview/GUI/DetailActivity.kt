@@ -39,10 +39,10 @@ class DetailActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) { validateFriend() }
         })
 
-        imgCallFriend.setOnClickListener { view ->
-            var intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:(+45)${friend.number}"))
-            startActivity(intent);
-         }
+        imgCallFriend.setOnClickListener { view -> var intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${friend.number}")); startActivity(intent);}
+        imgTextFriend.setOnClickListener { view -> var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${friend.number}")); startActivity(intent);}
+        imgMailFriend.setOnClickListener { view -> sendMail()}
+        imgLinkFriend.setOnClickListener { view -> goToLink()}
 
         tvLink.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -52,6 +52,7 @@ class DetailActivity : AppCompatActivity() {
 
         if(intent.extras == null){
             imgCallFriend.isVisible = false
+            imgTextFriend.isVisible = false
         }
         else{
             btnCreate.isVisible = false
@@ -76,6 +77,7 @@ class DetailActivity : AppCompatActivity() {
         tvName.setText(friend.name)
         tvMail.setText(friend.mail)
         tvNumber.setText(friend.number)
+        tvLink.setText(friend.url)
         isFavorite.isChecked = friend.isFavorite
     }
 
@@ -113,4 +115,20 @@ class DetailActivity : AppCompatActivity() {
         setResult(IntentValues.RESPONSE_DETAIL_DELETE.code, intent)
         finish()
     }
+
+    fun sendMail(){
+        var emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.type = "plain/text"
+        val receivers = arrayOf("${friend.mail}")
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, receivers)
+        startActivity(emailIntent)
+    }
+
+    fun goToLink(){
+        var url = this.friend.url;
+        if (!url!!.startsWith("http://") && !url.startsWith("https://")){url = "http://" + url}
+        var intent = Intent(Intent.ACTION_VIEW, Uri.parse("${url}"))
+        startActivity(intent)
+    }
+
 }

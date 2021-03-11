@@ -41,9 +41,25 @@
             android:hint="Enter mail"
             android:inputType="text"
             android:maxLines="1"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgMailFriend"
+            android:layout_marginLeft="65dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/txt"
+            android:layout_alignParentEnd="true"
             android:layout_marginBottom="25px"
             />
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,16 +78,33 @@
             />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imgCallFriend"
-        android:layout_marginLeft="65dp"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/call"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="25px"
-        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgCallFriend"
+            android:layout_marginLeft="65dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/call"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="25px"
+            />
+
+        <ImageView
+            android:id="@+id/imgTextFriend"
+            android:layout_marginLeft="10dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/txt"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="25px"
+            />
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -87,6 +120,21 @@
             android:hint="Enter URL"
             android:inputType="text"
             android:maxLines="1"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgLinkFriend"
+            android:layout_marginLeft="65dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/mail"
+            android:layout_alignParentEnd="true"
             android:layout_marginBottom="25px"
             />
     </LinearLayout>
