@@ -24,11 +24,13 @@ class DetailActivity : AppCompatActivity() {
 
     lateinit var friend: BEFriend
     val myCalendar: Calendar = Calendar.getInstance()
+    var updatedDate: Boolean = false
 
     var date = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             myCalendar[Calendar.YEAR] = year
             myCalendar[Calendar.MONTH] = monthOfYear
             myCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+            this.updatedDate = true
             updateLabel()
         }
 
@@ -67,6 +69,8 @@ class DetailActivity : AppCompatActivity() {
         if(intent.extras == null){
             imgCallFriend.isVisible = false
             imgTextFriend.isVisible = false
+            imgLinkFriend.isVisible = false
+            imgMailFriend.isVisible = false
         }
         else{
             btnCreate.isVisible = false
@@ -93,6 +97,12 @@ class DetailActivity : AppCompatActivity() {
         tvNumber.setText(friend.number)
         tvLink.setText(friend.url)
         isFavorite.isChecked = friend.isFavorite
+
+        if(friend.birthdate != null){
+            this.updatedDate = true
+            this.myCalendar.time = friend.birthdate
+            updateLabel()
+        }
     }
 
 
@@ -102,7 +112,7 @@ class DetailActivity : AppCompatActivity() {
         val number = tvNumber.text.toString()
         val url = tvLink.text.toString()
         val isFavorite = isFavorite.isChecked
-        val friend = BEFriend(0, name, number, mail, isFavorite, url)
+        val friend = BEFriend(0, name, number, mail, isFavorite, url, if (this.updatedDate) myCalendar.time else null)
 
         val intent = Intent()
         intent.putExtra("FRIEND_CREATE", friend)
@@ -116,6 +126,7 @@ class DetailActivity : AppCompatActivity() {
         friend.number = tvNumber.text.toString()
         friend.url = tvLink.text.toString()
         friend.isFavorite = isFavorite.isChecked
+        friend.birthdate = if (this.updatedDate) myCalendar.time else null
 
         val intent = Intent()
         intent.putExtra("FRIEND_UPDATE", friend)
