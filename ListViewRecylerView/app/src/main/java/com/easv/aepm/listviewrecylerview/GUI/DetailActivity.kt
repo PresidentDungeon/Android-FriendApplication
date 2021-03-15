@@ -92,6 +92,12 @@ class DetailActivity : AppCompatActivity() {
             updateLayout.isVisible = true
             friend = intent.extras?.getSerializable("FRIEND") as BEFriend
             initializeText(friend)
+
+            this.mFile = File(this.friend.image)
+            if (this.mFile!!.exists()) {
+                ivImage.setImageURI(Uri.fromFile(mFile))
+
+            }
         }
     }
 
@@ -127,7 +133,7 @@ class DetailActivity : AppCompatActivity() {
         val number = tvNumber.text.toString()
         val url = tvLink.text.toString()
         val isFavorite = isFavorite.isChecked
-        val friend = BEFriend(0, name, number, mail, isFavorite, url, if (this.updatedDate) myCalendar.time else null)
+        val friend = BEFriend(0, name, number, mail, isFavorite, url, if (this.updatedDate) myCalendar.time else null, if (this.mFile != null && this.mFile!!.exists()) mFile!!.path else "")
 
         val intent = Intent()
         intent.putExtra("FRIEND_CREATE", friend)
@@ -142,6 +148,7 @@ class DetailActivity : AppCompatActivity() {
         friend.url = tvLink.text.toString()
         friend.isFavorite = isFavorite.isChecked
         friend.birthdate = if (this.updatedDate) myCalendar.time else null
+        friend.image = if (this.mFile != null && this.mFile!!.exists()) mFile!!.path else ""
 
         val intent = Intent()
         intent.putExtra("FRIEND_UPDATE", friend)
@@ -205,11 +212,8 @@ class DetailActivity : AppCompatActivity() {
 
         val applicationId = BuildConfig.APPLICATION_ID
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "${applicationId}.provider", mFile!!))
-        
-        startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
-        if (intent.resolveActivity(packageManager) != null) {
 
-        } else Log.d(TAG, "Camera app could NOT be started")
+        startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
