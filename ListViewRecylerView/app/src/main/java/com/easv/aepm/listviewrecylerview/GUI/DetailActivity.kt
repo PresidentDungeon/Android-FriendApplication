@@ -1,21 +1,32 @@
 package com.easv.aepm.listviewrecylerview.GUI
 
+import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import com.easv.aepm.listviewrecylerview.BuildConfig
 import com.easv.aepm.listviewrecylerview.R
 import com.easv.aepm.listviewrecylerview.data.BEFriend
 import com.easv.aepm.listviewrecylerview.data.IntentValues
 import kotlinx.android.synthetic.main.activity_detail.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +36,9 @@ class DetailActivity : AppCompatActivity() {
     lateinit var friend: BEFriend
     val myCalendar: Calendar = Calendar.getInstance()
     var updatedDate: Boolean = false
+    private val PERMISSION_REQUEST_CODE = 1
+    var mFile: File? = null
+    var TAG = "DetailA"
 
     var date = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             myCalendar[Calendar.YEAR] = year
@@ -59,6 +73,7 @@ class DetailActivity : AppCompatActivity() {
         imgMailFriend.setOnClickListener { view -> sendMail()}
         imgLinkFriend.setOnClickListener { view -> goToLink()}
         tvBirthday.setOnTouchListener { v, event -> if(event.action == MotionEvent.ACTION_UP){openPopup()}; true }
+        ivImage.setOnClickListener { view -> checkCameraPermission()}
 
         tvLink.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -167,6 +182,69 @@ class DetailActivity : AppCompatActivity() {
         val myFormat = "dd/MM/YYYY" //In which you need put here
         val sdf = SimpleDateFormat(myFormat, Locale.GERMAN)
         tvBirthday.setText(sdf.format(myCalendar.time))
+    }
+
+    private fun checkCameraPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        val permissions = mutableListOf<String>()
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.CAMERA)
+        if (permissions.size > 0)
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSION_REQUEST_CODE)
+        else
+            startCameraActivity()
+    }
+
+    private fun startCameraActivity() {
+        mFile = getOutputMediaFile()
+        if (mFile == null) {Toast.makeText(this, "Could not create file...", Toast.LENGTH_LONG).show(); return}
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+        val applicationId = BuildConfig.APPLICATION_ID
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "${applicationId}.provider", mFile!!))
+
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
+        } else Log.d(TAG, "Camera app could NOT be started")
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode === PERMISSION_REQUEST_CODE){
+            for (item in grantResults){
+                if (item === PackageManager.PERMISSION_DENIED)
+                    Log.d(TAG, "Failed to create directory")
+                    return
+            }
+            startCameraActivity()
+        }
+    }
+
+    private fun getOutputMediaFile(): File? {
+        val mediaStorageDir = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Camera")
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null
+            }
+        }
+
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val postfix = "jpg"
+        val prefix = "IMG"
+        return File(mediaStorageDir.path + File.separator + prefix + "_" + timeStamp + "." + postfix)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            IntentValues.REQUESTCODE_IMAGE.code -> if (resultCode == RESULT_OK) { ivImage.setImageURI(Uri.fromFile(mFile))}
+            else -> false
+        }
     }
 
 }

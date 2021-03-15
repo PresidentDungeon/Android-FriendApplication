@@ -116,7 +116,7 @@
             android:id="@+id/tvBirthday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter name"
+            android:hint="Enter birthday"
             android:inputType="date"
             android:maxLines="1"
             android:layout_marginBottom="25px"
@@ -161,6 +161,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Is favorite"
+        />
+
+    <ImageView
+        android:id="@+id/ivImage"
+        android:layout_width="wrap_content"
+        android:layout_height="270dp"
+        android:src="@drawable/susan"
         />
 
     <RelativeLayout
