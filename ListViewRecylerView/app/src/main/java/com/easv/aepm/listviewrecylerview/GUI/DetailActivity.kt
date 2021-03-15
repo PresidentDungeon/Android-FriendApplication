@@ -205,9 +205,10 @@ class DetailActivity : AppCompatActivity() {
 
         val applicationId = BuildConfig.APPLICATION_ID
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "${applicationId}.provider", mFile!!))
-
+        
+        startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
         if (intent.resolveActivity(packageManager) != null) {
-            startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
+
         } else Log.d(TAG, "Camera app could NOT be started")
     }
 
