@@ -228,9 +228,9 @@ class DetailActivity : AppCompatActivity() {
 
         if (requestCode === PERMISSION_REQUEST_CODE){
             for (item in grantResults){
-                if (item === PackageManager.PERMISSION_DENIED)
-                    Log.d(TAG, "Failed to create directory")
+                if (item === PackageManager.PERMISSION_DENIED) {
                     return
+                }
             }
             startCameraActivity()
         }
