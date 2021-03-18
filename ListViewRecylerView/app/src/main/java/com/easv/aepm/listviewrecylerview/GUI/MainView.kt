@@ -43,9 +43,10 @@ class MainView : AppCompatActivity(), IClickItemListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
-            R.id.create_friend -> {
-                openCreateActivity(); true
-            }
+            R.id.create_friend -> { openCreateActivity(); true }
+//            R.id.sortName -> {this.adapter.setSortingType(Sorting.SORTING_NAME); searchText(); true}
+//            R.id.sortAge -> {this.adapter.setSortingType(Sorting.SORTING_AGE); searchText(); true}
+
             else -> super.onOptionsItemSelected(item)
         }
     }
