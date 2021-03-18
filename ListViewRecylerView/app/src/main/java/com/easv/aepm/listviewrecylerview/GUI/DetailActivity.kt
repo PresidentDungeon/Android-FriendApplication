@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -213,7 +214,13 @@ class DetailActivity : AppCompatActivity() {
         val applicationId = BuildConfig.APPLICATION_ID
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "${applicationId}.provider", mFile!!))
 
-        startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
+        try{
+            startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
+        }
+        catch (e: ActivityNotFoundException){
+            Toast.makeText(this, "Camera not found!", Toast.LENGTH_LONG).show()
+        }
+
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
