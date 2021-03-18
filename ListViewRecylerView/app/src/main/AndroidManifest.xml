@@ -15,9 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ListViewRecylerView">
-        <activity android:name=".GUI.MainView"></activity>
+        <activity android:name=".GUI.CameraX"></activity>
         <activity android:name=".GUI.DetailActivity" />
-        <activity android:name=".GUI.CameraX">
+        <activity android:name=".GUI.MainView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

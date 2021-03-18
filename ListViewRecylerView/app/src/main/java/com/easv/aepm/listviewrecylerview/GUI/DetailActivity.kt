@@ -2,6 +2,7 @@ package com.easv.aepm.listviewrecylerview.GUI
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.ActivityNotFoundException
@@ -202,7 +203,7 @@ class DetailActivity : AppCompatActivity() {
         if (permissions.size > 0)
             ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSION_REQUEST_CODE)
         else
-            startCameraActivity()
+            showCameraDialog()
     }
 
     private fun startCameraActivity() {
@@ -215,7 +216,7 @@ class DetailActivity : AppCompatActivity() {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, "${applicationId}.provider", mFile!!))
 
         try{
-            startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE.code)
+            startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE_APP.code)
         }
         catch (e: ActivityNotFoundException){
             Toast.makeText(this, "Camera not found!", Toast.LENGTH_LONG).show()
@@ -232,7 +233,7 @@ class DetailActivity : AppCompatActivity() {
                     return
                 }
             }
-            startCameraActivity()
+            showCameraDialog()
         }
     }
 
@@ -254,9 +255,31 @@ class DetailActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
-            IntentValues.REQUESTCODE_IMAGE.code -> if (resultCode == RESULT_OK) { ivImage.setImageURI(Uri.fromFile(mFile))}
+            IntentValues.REQUESTCODE_IMAGE_APP.code -> if (resultCode == RESULT_OK) { ivImage.setImageURI(Uri.fromFile(mFile))}
+            IntentValues.REQUESTCODE_IMAGE_DIRECT.code -> if (resultCode == RESULT_OK) { ivImage.setImageURI(Uri.fromFile(mFile))}
             else -> false
         }
+    }
+
+    private fun showCameraDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Camera Handling")
+        alertDialogBuilder
+            .setMessage("Open build-in-camera-app or take picture directly?")
+            .setCancelable(true)
+            .setPositiveButton("Standard App") { dialog, id -> startCameraActivity() }
+            .setNegativeButton("Directly", { dialog, id -> startInCameraActivity() })
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun startInCameraActivity(){
+        mFile = getOutputMediaFile()
+        if (mFile == null) {Toast.makeText(this, "Could not create file...", Toast.LENGTH_LONG).show(); return}
+
+        val intent = Intent(this, CameraX::class.java)
+        intent.putExtra("FILEPATH", mFile)
+        startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE_DIRECT.code)
     }
 
 }

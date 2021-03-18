@@ -1,12 +1,15 @@
 package com.easv.aepm.listviewrecylerview.GUI
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.icu.text.SimpleDateFormat
+import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -25,27 +28,32 @@ import java.util.concurrent.Executors
 
 
 class CameraX : AppCompatActivity() {
-    private var imageCapture: ImageCapture? = null
 
+    private var imageCapture: ImageCapture? = null
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var lastImage: File
+    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+    private var mediaPlayer = MediaPlayer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_x)
 
-        // Request camera permissions
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
+        startCamera()
 
         // Set up the listener for take photo button
         camera_capture_button.setOnClickListener { takePhoto() }
+        camera_accept_button.setOnClickListener { view -> acceptImage() }
+        camera_retake_button.setOnClickListener { view -> undoImage() }
+        camera_rotate_button.setOnClickListener { view ->
+            cameraSelector = if(cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) CameraSelector.DEFAULT_BACK_CAMERA else CameraSelector.DEFAULT_FRONT_CAMERA
+            startCamera() }
 
-        outputDirectory = getOutputDirectory()
+        if(intent.extras != null){
+            outputDirectory = intent.extras?.getSerializable("FILEPATH") as File
+        }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -55,16 +63,13 @@ class CameraX : AppCompatActivity() {
         val imageCapture = imageCapture ?: return
 
         // Create time-stamped output file to hold the image
-        val photoFile = File(
-            outputDirectory,
-            java.text.SimpleDateFormat(FILENAME_FORMAT, Locale.GERMANY
-            ).format(System.currentTimeMillis()) + ".jpg")
+        this.lastImage = File(outputDirectory, "")
 
         // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(lastImage).build()
 
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
+        // Set up image capture listener, which is triggered after photo has been taken
+        playAudio()
         imageCapture.takePicture(
             outputOptions, ContextCompat.getMainExecutor(this), object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
@@ -72,12 +77,25 @@ class CameraX : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val savedUri = Uri.fromFile(photoFile)
-                    val msg = "Photo capture succeeded: $savedUri"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                    ivDisplay.setImageURI(Uri.fromFile(lastImage))
+                    imagePreview.visibility = View.INVISIBLE
+                    photoDetail.visibility = View.VISIBLE
                 }
             })
+    }
+
+    private fun acceptImage() {
+        Toast.makeText(this, "Image updated", Toast.LENGTH_SHORT).show()
+        setResult(Activity.RESULT_OK, intent)
+        finish()
+    }
+
+    private fun undoImage() {
+        imagePreview.visibility = View.VISIBLE
+        photoDetail.visibility = View.INVISIBLE
+
+        try{ lastImage.delete(); ivDisplay.setImageResource(0)}
+        catch (e: java.lang.Exception){}
     }
 
     private fun startCamera() {
@@ -96,9 +114,6 @@ class CameraX : AppCompatActivity() {
             imageCapture = ImageCapture.Builder()
                 .build()
 
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             try {
                 // Unbind use cases before rebinding
                 cameraProvider.unbindAll()
@@ -114,9 +129,17 @@ class CameraX : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
+    private fun playAudio() {
+        var uriString: Uri = Uri.parse("android.resource://" + packageName + "/" + R.raw.camera)
+
+        try {
+            mediaPlayer.reset()
+            mediaPlayer.setDataSource(this, uriString)
+            mediaPlayer.prepare()
+            mediaPlayer.start()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun getOutputDirectory(): File {
@@ -126,21 +149,6 @@ class CameraX : AppCompatActivity() {
             mediaDir else filesDir
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(this,
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
-                finish()
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
@@ -148,8 +156,5 @@ class CameraX : AppCompatActivity() {
 
     companion object {
         private const val TAG = "CameraXBasic"
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 }
