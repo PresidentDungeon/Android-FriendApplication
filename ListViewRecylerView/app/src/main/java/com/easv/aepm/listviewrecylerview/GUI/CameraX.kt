@@ -93,6 +93,8 @@ class CameraX : AppCompatActivity() {
                 .also {
                     it.setSurfaceProvider(viewFinder.createSurfaceProvider())
                 }
+            imageCapture = ImageCapture.Builder()
+                .build()
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -103,7 +105,7 @@ class CameraX : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, preview, imageCapture)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -148,6 +150,6 @@ class CameraX : AppCompatActivity() {
         private const val TAG = "CameraXBasic"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.RECORD_AUDIO)
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 }
