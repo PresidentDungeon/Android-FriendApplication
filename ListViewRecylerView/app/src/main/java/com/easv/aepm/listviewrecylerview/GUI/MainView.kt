@@ -53,10 +53,6 @@ class MainView : AppCompatActivity(), IClickItemListener {
         }
     }
 
-    fun setupDataObserver(){
-        friends.
-    }
-
     fun searchText(){
         val text: String = searchBar.text.toString()
         val favoriteEnabled = cbFavorite.isChecked
@@ -118,6 +114,6 @@ class MainView : AppCompatActivity(), IClickItemListener {
         }
 
 
-        searchText()
+        this.adapter.filter("", false)
     }
 }
