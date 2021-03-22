@@ -98,22 +98,17 @@ class MainView : AppCompatActivity(), IClickItemListener {
         if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_CREATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_CREATE") as BEFriend
             this.friends.addFriend(friend)
-//            searchText()
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_UPDATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_UPDATE") as BEFriend
             this.friends.updateFriend(friend)
-//            searchText()
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_DELETE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_DELETE") as BEFriend
             this.friends.deleteFriend(friend)
-//            searchText()
         }
 
-
-        this.adapter.filter("", false)
     }
 }

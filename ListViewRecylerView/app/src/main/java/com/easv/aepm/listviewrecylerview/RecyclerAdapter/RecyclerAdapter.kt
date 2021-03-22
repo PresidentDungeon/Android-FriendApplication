@@ -34,8 +34,7 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
         this.itemListener = itemClickListener
         this.context = context
 
-        val getDataJob = GlobalScope.async { friendRepository.getFriends("SELECT * FROM BEFriend ORDER BY name ASC", emptyArray()) }
-        getDataJob.invokeOnCompletion { _ -> val myData = getDataJob.getCompleted(); this.friendList = myData; (context as AppCompatActivity).runOnUiThread { notifyDataSetChanged()}}
+        setupDataObserver()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerHolder {
@@ -97,6 +96,16 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
 
     fun setSortingType(sortingType: Sorting){
         this.sortingType = sortingType
+    }
+
+    private fun setupDataObserver() {
+
+        val observer = Observer<List<BEFriend>>{ persons ->
+            this.friendList = persons
+            notifyDataSetChanged()
+        }
+
+        friendRepository.getFriends().observe(context as AppCompatActivity, observer)
     }
 }
 

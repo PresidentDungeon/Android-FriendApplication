@@ -19,10 +19,10 @@ class FriendRepository private constructor(context: Context){
     private val friendDao = database.friendDao()
 
     fun addFriend(friend: BEFriend){ executor.execute{friendDao.addFriend(friend);} }
-    suspend fun getFriends(): List<BEFriend> = friendDao.getFriends()
+    fun getFriends(): LiveData<List<BEFriend>> = friendDao.getFriends()
     suspend fun getFriends(query: String, args: Array<Any>): List<BEFriend> = friendDao.getFriendsFilter(SimpleSQLiteQuery(query, args))
     suspend fun getFriend(id: Int): BEFriend? = friendDao.getFriend(id)
-    fun updateFriend(friend: BEFriend){ executor.execute { friendDao.updateFriend(friend)}}
+    fun updateFriend(friend: BEFriend){ executor.execute {friendDao.updateFriend(friend)}}
     fun deleteFriend(friend: BEFriend){ executor.execute({friendDao.deleteFriend(friend)})}
 
     companion object{

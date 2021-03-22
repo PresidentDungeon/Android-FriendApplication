@@ -11,8 +11,8 @@ interface FriendDao {
     @Insert
     fun addFriend(friend: BEFriend)
 
-    @Query("SELECT * FROM BEFriend")
-    suspend fun getFriends(): List<BEFriend>
+    @Query("SELECT * FROM BEFriend ORDER BY name ASC")
+    fun getFriends(): LiveData<List<BEFriend>>
 
     @RawQuery(observedEntities = [BEFriend::class])
     suspend fun getFriendsFilter(query: SupportSQLiteQuery): List<BEFriend>
