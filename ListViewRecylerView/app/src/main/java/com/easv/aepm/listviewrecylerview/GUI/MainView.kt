@@ -4,22 +4,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import android.widget.AdapterView
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.easv.aepm.listviewrecylerview.DAL.FriendRepository
 import com.easv.aepm.listviewrecylerview.R
 import com.easv.aepm.listviewrecylerview.RecyclerAdapter.RecyclerAdapter
 import com.easv.aepm.listviewrecylerview.data.BEFriend
-import com.easv.aepm.listviewrecylerview.data.FriendRepository
 import com.easv.aepm.listviewrecylerview.data.IntentValues
+import com.easv.aepm.listviewrecylerview.data.Sorting
 import com.easv.aepm.listviewrecylerview.data.interfaces.IClickItemListener
 import kotlinx.android.synthetic.main.activity_main3.*
 
 class MainView : AppCompatActivity(), IClickItemListener {
 
-    private var friends = FriendRepository()
+    private var friends = FriendRepository.get()
     private lateinit var adapter: RecyclerAdapter
 
 
@@ -30,8 +31,9 @@ class MainView : AppCompatActivity(), IClickItemListener {
         btnSearch.setOnClickListener { view -> searchText() }
         cbFavorite.setOnCheckedChangeListener{ view, isChecked -> searchText()}
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = RecyclerAdapter(this, friends, this)
+        adapter = RecyclerAdapter(this, this)
         recyclerView.adapter = adapter
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -43,11 +45,16 @@ class MainView : AppCompatActivity(), IClickItemListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
-            R.id.create_friend -> {
-                openCreateActivity(); true
-            }
+            R.id.create_friend -> { openCreateActivity(); true }
+            R.id.sortName -> {this.adapter.setSortingType(Sorting.SORTING_NAME); searchText(); true}
+            R.id.sortAge -> {this.adapter.setSortingType(Sorting.SORTING_AGE); searchText(); true}
+
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun setupDataObserver(){
+        friends.
     }
 
     fun searchText(){
@@ -95,17 +102,21 @@ class MainView : AppCompatActivity(), IClickItemListener {
         if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_CREATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_CREATE") as BEFriend
             this.friends.addFriend(friend)
+//            searchText()
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_UPDATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_UPDATE") as BEFriend
             this.friends.updateFriend(friend)
+//            searchText()
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_DELETE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_DELETE") as BEFriend
             this.friends.deleteFriend(friend)
+//            searchText()
         }
+
 
         searchText()
     }

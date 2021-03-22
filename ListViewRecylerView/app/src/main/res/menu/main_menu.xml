@@ -5,4 +5,25 @@
         android:title="Add Friend"
         app:showAsAction="always"
         />
+
+    <group
+        android:id="@+id/menu_sort_group"
+        android:checkableBehavior="single"
+        >
+        <item
+            android:title="Order by..."
+            android:enabled="false"
+            android:checkable="false"
+            />
+        <item
+            android:id="@+id/sortName"
+            android:title="Name"
+            android:checkable="false"
+            />
+        <item
+            android:id="@+id/sortAge"
+            android:title="Age"
+            android:checkable="false"
+            />
+    </group>
 </menu>
