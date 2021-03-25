@@ -1,6 +1,7 @@
 package com.easv.aepm.listviewrecylerview.RecyclerAdapter
 
 import android.content.Context
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -34,7 +35,8 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
         this.itemListener = itemClickListener
         this.context = context
 
-        setupDataObserver()
+        val getDataJob = GlobalScope.async { friendRepository.getFriends("SELECT * FROM BEFriend ORDER BY name ASC", emptyArray()) }
+        getDataJob.invokeOnCompletion { _ -> val myData = getDataJob.getCompleted(); this.friendList = myData; (context as AppCompatActivity).runOnUiThread { notifyDataSetChanged()}}
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerHolder {
@@ -84,29 +86,18 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
             args.add(favorite)
         }
 
-        when(sortingType){
-            Sorting.SORTING_NAME -> {queryString += " order by name ASC"}
-            Sorting.SORTING_AGE -> {queryString += " order by birthdate ASC"}
-        }
+        queryString += sortingType.query
 
         val getDataJob = GlobalScope.async {friendRepository.getFriends(queryString, args.toTypedArray()) }
         getDataJob.invokeOnCompletion { _ -> val myData = getDataJob.getCompleted(); this.friendList = myData
             (context as AppCompatActivity).runOnUiThread { notifyDataSetChanged()} }
+
     }
 
     fun setSortingType(sortingType: Sorting){
         this.sortingType = sortingType
     }
 
-    private fun setupDataObserver() {
-
-        val observer = Observer<List<BEFriend>>{ persons ->
-            this.friendList = persons
-            notifyDataSetChanged()
-        }
-
-        friendRepository.getFriends().observe(context as AppCompatActivity, observer)
-    }
 }
 
 

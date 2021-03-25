@@ -11,19 +11,18 @@ import java.lang.IllegalStateException
 import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "friend-database"
-private val executor = Executors.newSingleThreadExecutor()
 
 class FriendRepository private constructor(context: Context){
 
     private val database: Database = Room.databaseBuilder(context.applicationContext, Database::class.java, DATABASE_NAME).build()
     private val friendDao = database.friendDao()
 
-    fun addFriend(friend: BEFriend){ executor.execute{friendDao.addFriend(friend);} }
+    fun addFriend(friend: BEFriend){ friendDao.addFriend(friend);}
     fun getFriends(): LiveData<List<BEFriend>> = friendDao.getFriends()
     suspend fun getFriends(query: String, args: Array<Any>): List<BEFriend> = friendDao.getFriendsFilter(SimpleSQLiteQuery(query, args))
     suspend fun getFriend(id: Int): BEFriend? = friendDao.getFriend(id)
-    fun updateFriend(friend: BEFriend){ executor.execute {friendDao.updateFriend(friend)}}
-    fun deleteFriend(friend: BEFriend){ executor.execute({friendDao.deleteFriend(friend)})}
+    fun updateFriend(friend: BEFriend){friendDao.updateFriend(friend)}
+    fun deleteFriend(friend: BEFriend){friendDao.deleteFriend(friend)}
 
     companion object{
         private var INSTANCE: FriendRepository? = null

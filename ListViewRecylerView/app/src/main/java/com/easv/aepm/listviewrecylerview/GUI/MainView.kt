@@ -17,6 +17,9 @@ import com.easv.aepm.listviewrecylerview.data.IntentValues
 import com.easv.aepm.listviewrecylerview.data.Sorting
 import com.easv.aepm.listviewrecylerview.data.interfaces.IClickItemListener
 import kotlinx.android.synthetic.main.activity_main3.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 class MainView : AppCompatActivity(), IClickItemListener {
 
@@ -95,20 +98,31 @@ class MainView : AppCompatActivity(), IClickItemListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        var job: Deferred<Unit>? = null
+
         if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_CREATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_CREATE") as BEFriend
-            this.friends.addFriend(friend)
+
+            job = GlobalScope.async { friends.addFriend(friend) }
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_UPDATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_UPDATE") as BEFriend
-            this.friends.updateFriend(friend)
+
+            job = GlobalScope.async { friends.updateFriend(friend) }
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_DELETE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_DELETE") as BEFriend
-            this.friends.deleteFriend(friend)
+
+            job = GlobalScope.async { friends.deleteFriend(friend) }
         }
+
+        job?.let {
+            job.invokeOnCompletion { _ -> searchText() }
+        }
+
+
 
     }
 }
