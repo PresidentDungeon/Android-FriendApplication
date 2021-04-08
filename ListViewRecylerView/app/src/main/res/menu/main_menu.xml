@@ -26,4 +26,19 @@
             android:checkable="false"
             />
     </group>
+    <group
+        android:id="@+id/menu_map_group"
+        android:checkableBehavior="single"
+        >
+        <item
+            android:title="Map"
+            android:enabled="false"
+            android:checkable="false"
+            />
+        <item
+            android:id="@+id/openMap"
+            android:title="Open map"
+            android:checkable="false"
+            />
+    </group>
 </menu>

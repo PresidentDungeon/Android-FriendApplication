@@ -1,13 +1,17 @@
 package com.easv.aepm.listviewrecylerview.GUI
 
 import android.Manifest
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +19,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
@@ -38,8 +41,12 @@ class DetailActivity : AppCompatActivity() {
     lateinit var friend: BEFriend
     val myCalendar: Calendar = Calendar.getInstance()
     var updatedDate: Boolean = false
-    private val PERMISSION_REQUEST_CODE = 1
+    val PERMISSION_REQUEST_CODE_CAMERA = 1
+    val PERMISSION_REQUEST_CODE_GPS = 2
+    val PERMISSION_REQUEST_CODE_GPS_DISTANCE = 3
     var mFile: File? = null
+    var mLocation: Location? = null
+    var mLocationManager: LocationManager? = null
     var TAG = "DetailA"
 
     var date = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
@@ -76,6 +83,8 @@ class DetailActivity : AppCompatActivity() {
         imgLinkFriend.setOnClickListener { view -> goToLink()}
         tvBirthday.setOnTouchListener { v, event -> if(event.action == MotionEvent.ACTION_UP){openPopup()}; true }
         ivImage.setOnClickListener { view -> checkCameraPermission()}
+        btnGPS.setOnClickListener { view -> checkGPSPermission()}
+        tvDistance.setOnClickListener{view -> checkDistancePermission()}
 
         tvLink.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {}
@@ -93,12 +102,11 @@ class DetailActivity : AppCompatActivity() {
             btnCreate.isVisible = false
             updateLayout.isVisible = true
             friend = intent.extras?.getSerializable("FRIEND") as BEFriend
+            mLocation = intent.extras?.getParcelable("Location")
             initializeText(friend)
-
             this.mFile = File(this.friend.image)
             if (this.mFile!!.exists()) {
                 ivImage.setImageURI(Uri.fromFile(mFile))
-
             }
         }
     }
@@ -126,6 +134,11 @@ class DetailActivity : AppCompatActivity() {
             this.myCalendar.time = friend.birthdate
             updateLabel()
         }
+
+        if(mLocation != null){
+            btnGPS.text = "${this.mLocation!!.latitude}, ${this.mLocation!!.longitude}"
+            tvDistance.isVisible = true
+        }
     }
 
 
@@ -135,10 +148,11 @@ class DetailActivity : AppCompatActivity() {
         val number = tvNumber.text.toString()
         val url = tvLink.text.toString()
         val isFavorite = isFavorite.isChecked
-        val friend = BEFriend(0, name, number, mail, isFavorite, url, if (this.updatedDate) myCalendar.time else null, if (this.mFile != null && this.mFile!!.exists()) mFile!!.path else "")
+        val friend = BEFriend(0, name, number, mail, isFavorite, url, if (this.updatedDate) myCalendar.time else null, if (this.mFile != null && this.mFile!!.exists()) mFile!!.path else "", null)
 
         val intent = Intent()
         intent.putExtra("FRIEND_CREATE", friend)
+        intent.putExtra("Location", mLocation)
         setResult(IntentValues.RESPONSE_DETAIL_CREATE.code, intent)
         finish()
     }
@@ -154,6 +168,7 @@ class DetailActivity : AppCompatActivity() {
 
         val intent = Intent()
         intent.putExtra("FRIEND_UPDATE", friend)
+        intent.putExtra("Location", mLocation)
         setResult(IntentValues.RESPONSE_DETAIL_UPDATE.code, intent)
         finish()
     }
@@ -201,9 +216,35 @@ class DetailActivity : AppCompatActivity() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             permissions.add(Manifest.permission.CAMERA)
         if (permissions.size > 0)
-            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSION_REQUEST_CODE)
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSION_REQUEST_CODE_CAMERA)
         else
             showCameraDialog()
+    }
+
+    private fun checkGPSPermission(){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        val permissions = mutableListOf<String>()
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (permissions.size > 0)
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSION_REQUEST_CODE_GPS)
+        else
+            setGPSLocation()
+    }
+
+    private fun checkDistancePermission(){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        val permissions = mutableListOf<String>()
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (permissions.size > 0)
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSION_REQUEST_CODE_GPS)
+        else
+            calculateDistance()
     }
 
     private fun startCameraActivity() {
@@ -227,14 +268,24 @@ class DetailActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode === PERMISSION_REQUEST_CODE){
-            for (item in grantResults){
-                if (item === PackageManager.PERMISSION_DENIED) {
-                    return
-                }
+        if (requestCode === PERMISSION_REQUEST_CODE_CAMERA){
+            if(grantResults.all { permission ->  permission == PackageManager.PERMISSION_GRANTED}){
+                showCameraDialog()
             }
-            showCameraDialog()
         }
+
+        if (requestCode === PERMISSION_REQUEST_CODE_GPS){
+            if(grantResults.all { permission ->  permission == PackageManager.PERMISSION_GRANTED}){
+                setGPSLocation()
+            }
+        }
+
+        if (requestCode === PERMISSION_REQUEST_CODE_GPS_DISTANCE){
+            if(grantResults.all { permission ->  permission == PackageManager.PERMISSION_GRANTED}){
+                calculateDistance()
+            }
+        }
+
     }
 
     private fun getOutputMediaFile(): File? {
@@ -282,4 +333,58 @@ class DetailActivity : AppCompatActivity() {
         startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE_DIRECT.code)
     }
 
+    var myLocationListener: LocationListener? = null
+
+    @SuppressLint("MissingPermission")
+    private fun setGPSLocation(){
+
+        if(mLocationManager == null){
+            this.mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        }
+            if (myLocationListener == null)
+                myLocationListener = object : LocationListener {
+                    override fun onLocationChanged(location: Location) {
+                        btnGPS.text = "${location.latitude}, ${location.longitude}"
+                        mLocationManager!!.removeUpdates(this)
+                        mLocation = location
+                        tvDistance.isVisible = true
+                    }
+                }
+            mLocationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, myLocationListener!!)
+    }
+
+    var mLocationDistanceListener: LocationListener? = null
+
+    @SuppressLint("MissingPermission")
+    private fun calculateDistance(){
+
+        if(mLocationManager == null){
+            this.mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        }
+
+        if(mLocationDistanceListener != null){
+            mLocationManager!!.removeUpdates(mLocationDistanceListener!!)
+            mLocationDistanceListener = null
+            tvDistance.setText("Click to calculate distance")
+            return
+        }
+
+        if(mLocationDistanceListener == null){
+            mLocationDistanceListener = object : LocationListener{
+                override fun onLocationChanged(location: Location) {
+                tvDistance.setText("${location.distanceTo(mLocation)}")
+            }
+        }
+    }
+        Toast.makeText(this, "Started listening", Toast.LENGTH_SHORT).show()
+        mLocationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, mLocationDistanceListener!!)
+    }
+
+    override fun onStop() {
+        mLocationDistanceListener?.let { mLocationManager?.removeUpdates(it) }
+        super.onStop()
+    }
+
 }
+
+

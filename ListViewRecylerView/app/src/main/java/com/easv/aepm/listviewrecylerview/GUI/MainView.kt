@@ -1,6 +1,7 @@
 package com.easv.aepm.listviewrecylerview.GUI
 
 import android.content.Intent
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
@@ -51,6 +52,7 @@ class MainView : AppCompatActivity(), IClickItemListener {
             R.id.create_friend -> { openCreateActivity(); true }
             R.id.sortName -> {this.adapter.setSortingType(Sorting.SORTING_NAME); searchText(); true}
             R.id.sortAge -> {this.adapter.setSortingType(Sorting.SORTING_AGE); searchText(); true}
+            R.id.openMap -> {openMapActivity(); true}
 
             else -> super.onOptionsItemSelected(item)
         }
@@ -67,10 +69,19 @@ class MainView : AppCompatActivity(), IClickItemListener {
         startActivityForResult(intent, IntentValues.REQUEST_DETAIL.code)
     }
 
+    fun openMapActivity(){
+        val intent = Intent(this, MapActivity::class.java)
+        startActivityForResult(intent, IntentValues.REQUESTCODE_MAP.code)
+    }
+
     override fun onItemClick(friend: BEFriend, position: Int) {
         val intent = Intent(this, DetailActivity::class.java)
+        val location: Location? = friend.location
+        friend.location = null
         intent.putExtra("FRIEND", friend)
+        intent.putExtra("Location", location)
         startActivityForResult(intent, IntentValues.REQUEST_DETAIL.code)
+        friend.location = location
     }
 
     override fun onItemLongClick(friend: BEFriend, position: Int, view: View) {
@@ -102,12 +113,16 @@ class MainView : AppCompatActivity(), IClickItemListener {
 
         if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_CREATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_CREATE") as BEFriend
+            val location = data?.extras?.getParcelable<Location>("Location")
+            friend.location = location
 
             job = GlobalScope.async { friends.addFriend(friend) }
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_UPDATE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_UPDATE") as BEFriend
+            val location = data?.extras?.getParcelable<Location>("Location")
+            friend.location = location
 
             job = GlobalScope.async { friends.updateFriend(friend) }
         }
@@ -118,11 +133,12 @@ class MainView : AppCompatActivity(), IClickItemListener {
             job = GlobalScope.async { friends.deleteFriend(friend) }
         }
 
+        else if(requestCode == IntentValues.REQUESTCODE_MAP.code){
+            searchText()
+        }
+
         job?.let {
             job.invokeOnCompletion { _ -> searchText() }
         }
-
-
-
     }
 }
