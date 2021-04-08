@@ -1,9 +1,6 @@
-package com.easv.aepm.listviewrecylerview.GUI
+package com.easv.aepm.friendapplication.GUI
 
-import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
-import android.icu.text.SimpleDateFormat
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -16,13 +13,10 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.easv.aepm.listviewrecylerview.R
+import com.easv.aepm.friendapplication.R
 import kotlinx.android.synthetic.main.activity_camera_x.*
-import kotlinx.android.synthetic.main.activity_detail.*
 import java.io.File
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

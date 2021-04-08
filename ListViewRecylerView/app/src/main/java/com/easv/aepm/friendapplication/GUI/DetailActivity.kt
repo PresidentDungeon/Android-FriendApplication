@@ -1,4 +1,4 @@
-package com.easv.aepm.listviewrecylerview.GUI
+package com.easv.aepm.friendapplication.GUI
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -26,10 +26,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
-import com.easv.aepm.listviewrecylerview.BuildConfig
-import com.easv.aepm.listviewrecylerview.R
-import com.easv.aepm.listviewrecylerview.data.BEFriend
-import com.easv.aepm.listviewrecylerview.data.IntentValues
+import com.easv.aepm.friendapplication.BuildConfig
+import com.easv.aepm.friendapplication.R
+import com.easv.aepm.friendapplication.data.BEFriend
+import com.easv.aepm.friendapplication.data.IntentValues
 import kotlinx.android.synthetic.main.activity_detail.*
 import java.io.File
 import java.text.SimpleDateFormat

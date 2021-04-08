@@ -1,4 +1,4 @@
-package com.easv.aepm.listviewrecylerview.GUI
+package com.easv.aepm.friendapplication.GUI
 
 import android.content.Intent
 import android.location.Location
@@ -7,16 +7,14 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.easv.aepm.listviewrecylerview.DAL.FriendRepository
-import com.easv.aepm.listviewrecylerview.R
-import com.easv.aepm.listviewrecylerview.RecyclerAdapter.RecyclerAdapter
-import com.easv.aepm.listviewrecylerview.data.BEFriend
-import com.easv.aepm.listviewrecylerview.data.IntentValues
-import com.easv.aepm.listviewrecylerview.data.Sorting
-import com.easv.aepm.listviewrecylerview.data.interfaces.IClickItemListener
+import com.easv.aepm.friendapplication.DAL.FriendRepository
+import com.easv.aepm.friendapplication.R
+import com.easv.aepm.friendapplication.RecyclerAdapter.RecyclerAdapter
+import com.easv.aepm.friendapplication.data.BEFriend
+import com.easv.aepm.friendapplication.data.IntentValues
+import com.easv.aepm.friendapplication.data.Sorting
+import com.easv.aepm.friendapplication.data.interfaces.IClickItemListener
 import kotlinx.android.synthetic.main.activity_main3.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
@@ -93,10 +91,12 @@ class MainView : AppCompatActivity(), IClickItemListener {
             when (item.itemId) {
                 R.id.call_friend -> {
                     var intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:(+45)${friend.number}"))
-                    startActivity(intent);
+                    startActivity(intent)
                     true
                 }
                 R.id.text_friend -> {
+                    var intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:${friend.number}"))
+                    startActivity(intent)
                     true
                 }
                 else -> false

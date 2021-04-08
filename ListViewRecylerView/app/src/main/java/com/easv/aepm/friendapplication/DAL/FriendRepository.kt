@@ -1,14 +1,12 @@
-package com.easv.aepm.listviewrecylerview.DAL
+package com.easv.aepm.friendapplication.DAL
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.sqlite.db.SupportSQLiteQuery
-import com.easv.aepm.listviewrecylerview.Database.Database
-import com.easv.aepm.listviewrecylerview.data.BEFriend
+import com.easv.aepm.friendapplication.Database.Database
+import com.easv.aepm.friendapplication.data.BEFriend
 import java.lang.IllegalStateException
-import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "friend-database"
 

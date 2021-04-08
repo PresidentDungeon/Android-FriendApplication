@@ -1,9 +1,9 @@
-package com.easv.aepm.listviewrecylerview.data.interfaces
+package com.easv.aepm.friendapplication.data.interfaces
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
-import com.easv.aepm.listviewrecylerview.data.BEFriend
+import com.easv.aepm.friendapplication.data.BEFriend
 
 @Dao
 interface FriendDao {

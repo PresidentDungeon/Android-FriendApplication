@@ -1,7 +1,7 @@
-package com.easv.aepm.listviewrecylerview.data
+package com.easv.aepm.friendapplication.data
 
 import android.app.Application
-import com.easv.aepm.listviewrecylerview.DAL.FriendRepository
+import com.easv.aepm.friendapplication.DAL.FriendRepository
 
 class FriendApplication : Application() {
 

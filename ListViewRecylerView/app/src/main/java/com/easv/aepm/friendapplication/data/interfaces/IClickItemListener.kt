@@ -1,7 +1,7 @@
-package com.easv.aepm.listviewrecylerview.data.interfaces
+package com.easv.aepm.friendapplication.data.interfaces
 
 import android.view.View
-import com.easv.aepm.listviewrecylerview.data.BEFriend
+import com.easv.aepm.friendapplication.data.BEFriend
 
 interface IClickItemListener {
     fun onItemClick(friend: BEFriend, position: Int)

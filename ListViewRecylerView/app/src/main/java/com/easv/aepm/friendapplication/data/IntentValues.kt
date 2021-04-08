@@ -1,4 +1,4 @@
-package com.easv.aepm.listviewrecylerview.data
+package com.easv.aepm.friendapplication.data
 
 enum class IntentValues(val code: Int) {
     REQUEST_DETAIL(1),

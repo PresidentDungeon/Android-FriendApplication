@@ -1,6 +1,5 @@
-package com.easv.aepm.listviewrecylerview.data
+package com.easv.aepm.friendapplication.data
 import android.location.Location
-import android.widget.DatePicker
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable

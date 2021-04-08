@@ -1,23 +1,18 @@
-package com.easv.aepm.listviewrecylerview.RecyclerAdapter
+package com.easv.aepm.friendapplication.RecyclerAdapter
 
 import android.content.Context
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import com.easv.aepm.listviewrecylerview.DAL.FriendRepository
-import com.easv.aepm.listviewrecylerview.R
-import com.easv.aepm.listviewrecylerview.data.BEFriend
-import com.easv.aepm.listviewrecylerview.data.Sorting
-import com.easv.aepm.listviewrecylerview.data.interfaces.IClickItemListener
+import com.easv.aepm.friendapplication.DAL.FriendRepository
+import com.easv.aepm.friendapplication.R
+import com.easv.aepm.friendapplication.data.BEFriend
+import com.easv.aepm.friendapplication.data.Sorting
+import com.easv.aepm.friendapplication.data.interfaces.IClickItemListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 
 
 class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{

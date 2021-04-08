@@ -1,4 +1,4 @@
-package com.easv.aepm.listviewrecylerview
+package com.easv.aepm.friendapplication
 
 import org.junit.Test
 

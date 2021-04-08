@@ -1,4 +1,4 @@
-package com.easv.aepm.listviewrecylerview.Database
+package com.easv.aepm.friendapplication.Database
 
 import android.location.Location
 import android.util.Log

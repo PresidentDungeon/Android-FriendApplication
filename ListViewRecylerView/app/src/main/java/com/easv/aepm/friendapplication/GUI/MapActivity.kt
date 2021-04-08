@@ -1,4 +1,4 @@
-package com.easv.aepm.listviewrecylerview.GUI
+package com.easv.aepm.friendapplication.GUI
 
 import android.content.Intent
 import android.location.Location
@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import com.easv.aepm.listviewrecylerview.DAL.FriendRepository
-import com.easv.aepm.listviewrecylerview.R
-import com.easv.aepm.listviewrecylerview.data.BEFriend
-import com.easv.aepm.listviewrecylerview.data.IntentValues
+import com.easv.aepm.friendapplication.DAL.FriendRepository
+import com.easv.aepm.friendapplication.R
+import com.easv.aepm.friendapplication.data.BEFriend
+import com.easv.aepm.friendapplication.data.IntentValues
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
