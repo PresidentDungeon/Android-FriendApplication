@@ -52,7 +52,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
 
                     val selectedFriend: BEFriend = friends[position-1]
                     val location = LatLng(selectedFriend.location!!.latitude, selectedFriend.location!!.longitude)
-                    val viewPoint = CameraUpdateFactory.newLatLngZoom(location, 8f)
+                    val viewPoint = CameraUpdateFactory.newLatLngZoom(location, 12f)
                     mMap.animateCamera(viewPoint)
 
                     userTouch = false;
