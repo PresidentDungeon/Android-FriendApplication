@@ -1,6 +1,7 @@
 package com.easv.aepm.friendapplication.RecyclerAdapter
 
 import android.content.Context
+import android.net.Uri
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -13,6 +14,7 @@ import com.easv.aepm.friendapplication.data.Sorting
 import com.easv.aepm.friendapplication.data.interfaces.IClickItemListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import java.io.File
 
 
 class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
@@ -101,11 +103,16 @@ class RecyclerHolder(view: View) : RecyclerView.ViewHolder(view) {
     val view: View = view
     val nameText: TextView = view.findViewById(R.id.name)
     val imageView: ImageView = view.findViewById(R.id.imgFavoriteExt)
+    val imagePerson: ImageView = view.findViewById(R.id.imgProfile)
 
     fun bind(friend: BEFriend){
         this.nameText.text = friend.name
         this.friend = friend;
         this.imageView.setImageResource(if (friend.isFavorite) R.drawable.ok else R.drawable.notok)
+
+        var file: File = File(this.friend.image)
+        if (file!!.exists()){this.imagePerson.setImageURI(Uri.fromFile(file))}
+
     }
 
     init { }

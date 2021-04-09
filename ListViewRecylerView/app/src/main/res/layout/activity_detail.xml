@@ -178,7 +178,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvDistance"
@@ -186,6 +187,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Click to calculate distance"
+                android:textAlignment="center"
+                android:maxLines="1"
+                />
+
+            <TextView
+                android:id="@+id/btnMap"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Click to display location on map"
                 android:textAlignment="center"
                 android:maxLines="1"
                 />
