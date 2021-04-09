@@ -104,7 +104,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
         if(intent.extras != null)
         {
             spSelection.isVisible = false
-            var friend: BEFriend = intent.extras!!.getSerializable("FRIEND")!! as BEFriend
+            var friendName: String = intent.extras!!.getString("FriendName")!!
             var friendLocation: Location = intent.extras!!.getParcelable("FriendLocation")!!
             var currentLocation: Location = intent.extras!!.getParcelable("CurrentLocation")!!
 
@@ -114,8 +114,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
             val bitmapFriend = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.location), width, height, false)
             val bitmapCurrent = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.current), width, height, false)
 
-            mMap.addMarker(MarkerOptions().position(LatLng(friendLocation.latitude, friendLocation.longitude)).title(friend.name).icon(BitmapDescriptorFactory.fromBitmap(bitmapFriend)))
-            lastSelectedMaker = mMap.addMarker(MarkerOptions().position(LatLng(currentLocation.latitude, currentLocation.longitude)).title(friend.name).icon(BitmapDescriptorFactory.fromBitmap(bitmapCurrent)))
+            mMap.addMarker(MarkerOptions().position(LatLng(friendLocation.latitude, friendLocation.longitude)).title(friendName).icon(BitmapDescriptorFactory.fromBitmap(bitmapFriend)))
+            lastSelectedMaker = mMap.addMarker(MarkerOptions().position(LatLng(currentLocation.latitude, currentLocation.longitude)).title(friendName).icon(BitmapDescriptorFactory.fromBitmap(bitmapCurrent)))
 
             this.mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             locationListener = object : LocationListener {

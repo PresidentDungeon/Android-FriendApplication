@@ -410,7 +410,10 @@ class DetailActivity : AppCompatActivity() {
                     mLocationManager!!.removeUpdates(this)
 
                     val intent = Intent(baseContext, MapActivity::class.java)
-                    intent.putExtra("FRIEND", friend)
+
+                    val friendName: String = tvName.text.toString()
+
+                    intent.putExtra("FriendName", if(!friendName.isNullOrEmpty()) friendName else "Friend")
                     intent.putExtra("FriendLocation", mLocation)
                     intent.putExtra("CurrentLocation", location)
                     startActivity(intent)
