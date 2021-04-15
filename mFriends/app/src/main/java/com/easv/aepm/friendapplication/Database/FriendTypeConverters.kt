@@ -8,16 +8,19 @@ import java.util.*
 
 class FriendTypeConverters {
 
+    //Converts type date to seconds
     @TypeConverter
     fun fromDate(date: Date?): Long?{
         return date?.time;
     }
 
+    //Converts type seconds to readable date
     @TypeConverter
     fun toDate(millisSinceEpoch: Long?): Date?{
         return millisSinceEpoch?.let { Date(it) }
     }
 
+    //Converts type latitude and longitude to string
     @TypeConverter
     fun fromLocation(location: Location?): String?{
         if(location != null){
@@ -28,6 +31,7 @@ class FriendTypeConverters {
         return null
     }
 
+    //Converts type string to latitude and longitude
     @TypeConverter
     fun toLocation(locationString: String?): Location?{
         if(locationString != null){

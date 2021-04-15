@@ -23,14 +23,14 @@ import java.util.concurrent.Executors
 
 class CameraX : AppCompatActivity() {
 
-    private var imageCapture: ImageCapture? = null
-    private lateinit var outputDirectory: File
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var lastImage: File
-    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var imageCapture: ImageCapture? = null //A modifiable image capture use case
+    private lateinit var outputDirectory: File //Placement of file
+    private lateinit var lastImage: File //Reference for last image taken
+    private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA //Select front or back camera
 
-    private var mediaPlayer = MediaPlayer()
+    private var mediaPlayer = MediaPlayer() //Plays media
 
+    // Initializer for onCreate
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_x)
@@ -48,10 +48,9 @@ class CameraX : AppCompatActivity() {
         if(intent.extras != null){
             outputDirectory = intent.extras?.getSerializable("FILEPATH") as File
         }
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
+    //Takes the photo
     private fun takePhoto() {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
@@ -78,12 +77,14 @@ class CameraX : AppCompatActivity() {
             })
     }
 
+    // Accepts the image and closes activity
     private fun acceptImage() {
         Toast.makeText(this, "Image updated", Toast.LENGTH_SHORT).show()
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
+    // Undoes the image and deletes image
     private fun undoImage() {
         imagePreview.visibility = View.VISIBLE
         photoDetail.visibility = View.INVISIBLE
@@ -92,6 +93,7 @@ class CameraX : AppCompatActivity() {
         catch (e: java.lang.Exception){}
     }
 
+    // Starts the camera
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -123,6 +125,7 @@ class CameraX : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    // Plays an audio file (For camera shutter sound)
     private fun playAudio() {
         var uriString: Uri = Uri.parse("android.resource://" + packageName + "/" + R.raw.camera)
 
@@ -134,18 +137,6 @@ class CameraX : AppCompatActivity() {
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else filesDir
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        cameraExecutor.shutdown()
     }
 
     companion object {

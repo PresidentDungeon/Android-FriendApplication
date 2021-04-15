@@ -8,20 +8,21 @@ import com.easv.aepm.friendapplication.Database.Database
 import com.easv.aepm.friendapplication.data.BEFriend
 import java.lang.IllegalStateException
 
+//Database name
 private const val DATABASE_NAME = "friend-database"
 
 class FriendRepository private constructor(context: Context){
 
-    private val database: Database = Room.databaseBuilder(context.applicationContext, Database::class.java, DATABASE_NAME).build()
-    private val friendDao = database.friendDao()
+    private val database: Database = Room.databaseBuilder(context.applicationContext, Database::class.java, DATABASE_NAME).build() //Generates database
+    private val friendDao = database.friendDao() //References to friendDao interface
 
+    //Does CRUD functionality - with read filtering
     fun addFriend(friend: BEFriend){ friendDao.addFriend(friend);}
-    fun getFriends(): LiveData<List<BEFriend>> = friendDao.getFriends()
     suspend fun getFriends(query: String, args: Array<Any>): List<BEFriend> = friendDao.getFriendsFilter(SimpleSQLiteQuery(query, args))
-    suspend fun getFriend(id: Int): BEFriend? = friendDao.getFriend(id)
     fun updateFriend(friend: BEFriend){friendDao.updateFriend(friend)}
     fun deleteFriend(friend: BEFriend){friendDao.deleteFriend(friend)}
 
+    //Singleton functionality to create FriendRepository
     companion object{
         private var INSTANCE: FriendRepository? = null
 

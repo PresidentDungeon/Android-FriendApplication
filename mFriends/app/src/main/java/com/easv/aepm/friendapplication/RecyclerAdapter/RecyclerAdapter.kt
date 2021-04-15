@@ -19,13 +19,14 @@ import java.io.File
 
 class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
 
-    private var mInflater: LayoutInflater
-    private var friendRepository: FriendRepository = FriendRepository.get()
-    private var itemListener: IClickItemListener
-    private var friendList: List<BEFriend> = emptyList()
-    private var sortingType: Sorting = Sorting.SORTING_NAME
-    private var context: Context
+    private var mInflater: LayoutInflater // Inflater for cells in list
+    private var friendRepository: FriendRepository = FriendRepository.get() // Friend repository
+    private var itemListener: IClickItemListener // Interface with implementation sent from MainView
+    private var friendList: List<BEFriend> = emptyList() // List to hold friends
+    private var sortingType: Sorting = Sorting.SORTING_NAME // Sort friends by name
+    private var context: Context // MainView Context
 
+    // Initializer of constructor
     constructor(context: Context, itemClickListener: IClickItemListener
     ) : super(){
         this.mInflater = LayoutInflater.from(context)
@@ -36,11 +37,13 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
         getDataJob.invokeOnCompletion { _ -> val myData = getDataJob.getCompleted(); this.friendList = myData; (context as AppCompatActivity).runOnUiThread { notifyDataSetChanged()}}
     }
 
+    // Inflates cell views for the recycler
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerHolder {
         val view: View = mInflater.inflate(R.layout.cell_extended, parent, false)
         return RecyclerHolder(view)
     }
 
+    // Bind values to cell
     override fun onBindViewHolder(holder: RecyclerHolder, position: Int) {
         val friend = friendList[position]
         holder.view.setOnClickListener { view -> itemListener.onItemClick(friend, position) }
@@ -53,10 +56,12 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
         holder.bind(friend)
     }
 
+    // Get the amount of cells
     override fun getItemCount(): Int {
         return friendList.size
     }
 
+    // Search filter for friends
     fun filter(text: String, favorite: Boolean) {
 
         var queryString: String = "SELECT * FROM BEFriend"
@@ -91,13 +96,14 @@ class RecyclerAdapter: RecyclerView.Adapter<RecyclerHolder>{
 
     }
 
+    // Change sorting type
     fun setSortingType(sortingType: Sorting){
         this.sortingType = sortingType
     }
 
 }
 
-
+// Class to hold variables for cell view
 class RecyclerHolder(view: View) : RecyclerView.ViewHolder(view) {
     lateinit var friend: BEFriend
     val view: View = view

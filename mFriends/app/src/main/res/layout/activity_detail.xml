@@ -227,7 +227,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:text="Create"
-            android:onClick="createCustomer"
+            android:onClick="createFriend"
             />
 
         <LinearLayout
@@ -246,7 +246,7 @@
                 android:layout_alignParentBottom="true"
                 android:text="Delete"
                 android:layout_marginRight="20px"
-                android:onClick="deleteCustomer"
+                android:onClick="deleteFriend"
                 />
 
             <Button
@@ -257,7 +257,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:text="Update"
-                android:onClick="updateCustomer"
+                android:onClick="updateFriend"
                 />
         </LinearLayout>
     </RelativeLayout>

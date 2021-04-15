@@ -7,6 +7,7 @@ import java.util.*
 
 @Entity
 data class BEFriend(
+
     //Setup information for Friend entity
     @PrimaryKey(autoGenerate = true) var id: Int = 0, var name: String, var number: String,
     var mail: String, var isFavorite: Boolean, var url: String?, var birthdate: Date?,

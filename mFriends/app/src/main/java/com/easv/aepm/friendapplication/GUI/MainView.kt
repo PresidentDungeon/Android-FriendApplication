@@ -22,10 +22,10 @@ import kotlinx.coroutines.async
 
 class MainView : AppCompatActivity(), IClickItemListener {
 
-    private var friends = FriendRepository.get()
-    private lateinit var adapter: RecyclerAdapter
+    private var friendRepo = FriendRepository.get() // Get the friend repository
+    private lateinit var adapter: RecyclerAdapter // Adapter for recyclerview
 
-
+    // Creates the menu and inserts adapter for recyclerview
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main3)
@@ -38,12 +38,14 @@ class MainView : AppCompatActivity(), IClickItemListener {
 
     }
 
+    // Creates the options menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
+    // What to do when selecting action from option menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
@@ -56,22 +58,26 @@ class MainView : AppCompatActivity(), IClickItemListener {
         }
     }
 
+    // Search function
     fun searchText(){
         val text: String = searchBar.text.toString()
         val favoriteEnabled = cbFavorite.isChecked
         adapter.filter(text, favoriteEnabled)
     }
 
+    // Open details activity to create new friend
     fun openCreateActivity(){
         val intent = Intent(this, DetailActivity::class.java)
         startActivityForResult(intent, IntentValues.REQUEST_DETAIL.code)
     }
 
+    // Open map
     fun openMapActivity(){
         val intent = Intent(this, MapActivity::class.java)
         startActivityForResult(intent, IntentValues.REQUESTCODE_MAP.code)
     }
 
+    // Open detail view with selected friend
     override fun onItemClick(friend: BEFriend, position: Int) {
         val intent = Intent(this, DetailActivity::class.java)
         val location: Location? = friend.location
@@ -82,6 +88,7 @@ class MainView : AppCompatActivity(), IClickItemListener {
         friend.location = location
     }
 
+    // Longclick to quickly call or text selected friend
     override fun onItemLongClick(friend: BEFriend, position: Int, view: View) {
 
         val popup = PopupMenu(this, view)
@@ -106,6 +113,7 @@ class MainView : AppCompatActivity(), IClickItemListener {
         popup.show()
     }
 
+    // Operation for create, update or delete to database
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -116,7 +124,7 @@ class MainView : AppCompatActivity(), IClickItemListener {
             val location = data?.extras?.getParcelable<Location>("Location")
             friend.location = location
 
-            job = GlobalScope.async { friends.addFriend(friend) }
+            job = GlobalScope.async { friendRepo.addFriend(friend) }
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_UPDATE.code) {
@@ -124,13 +132,13 @@ class MainView : AppCompatActivity(), IClickItemListener {
             val location = data?.extras?.getParcelable<Location>("Location")
             friend.location = location
 
-            job = GlobalScope.async { friends.updateFriend(friend) }
+            job = GlobalScope.async { friendRepo.updateFriend(friend) }
         }
 
         else if(requestCode == IntentValues.REQUEST_DETAIL.code && resultCode == IntentValues.RESPONSE_DETAIL_DELETE.code) {
             val friend = data?.extras?.getSerializable("FRIEND_DELETE") as BEFriend
 
-            job = GlobalScope.async { friends.deleteFriend(friend) }
+            job = GlobalScope.async { friendRepo.deleteFriend(friend) }
         }
 
         else if(requestCode == IntentValues.REQUESTCODE_MAP.code){

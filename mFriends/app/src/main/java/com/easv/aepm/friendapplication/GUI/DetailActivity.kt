@@ -38,18 +38,18 @@ import java.util.*
 
 class DetailActivity : AppCompatActivity() {
 
-    lateinit var friend: BEFriend
-    val myCalendar: Calendar = Calendar.getInstance()
-    var updatedDate: Boolean = false
-    val PERMISSION_REQUEST_CODE_CAMERA = 1
-    val PERMISSION_REQUEST_CODE_GPS = 2
-    val PERMISSION_REQUEST_CODE_GPS_DISTANCE = 3
-    val PERMISSION_REQUEST_CODE_GPS_MAP = 4
-    var mFile: File? = null
-    var mLocation: Location? = null
-    var mLocationManager: LocationManager? = null
-    var TAG = "DetailA"
+    lateinit var friend: BEFriend // Friend sent from MainActivity
+    val myCalendar: Calendar = Calendar.getInstance() // Calender for birthday
+    var updatedDate: Boolean = false // To update birthday
+    val PERMISSION_REQUEST_CODE_CAMERA = 1 // Request code for camera
+    val PERMISSION_REQUEST_CODE_GPS = 2 // Request code for GPS
+    val PERMISSION_REQUEST_CODE_GPS_DISTANCE = 3 // Request code for distance to friend
+    val PERMISSION_REQUEST_CODE_GPS_MAP = 4 // Request code for map
+    var mFile: File? = null // Temp file for inserting picture
+    var mLocation: Location? = null // Current location on request
+    var mLocationManager: LocationManager? = null // Manager to request current location
 
+    // A date listener. Updates date-label, when new date is selected
     var date = OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
             myCalendar[Calendar.YEAR] = year
             myCalendar[Calendar.MONTH] = monthOfYear
@@ -58,6 +58,7 @@ class DetailActivity : AppCompatActivity() {
             updateLabel()
         }
 
+    // Initialize listeners for the new/update form
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -113,6 +114,7 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
+    // Validate required fields for create and update
     fun validateFriend(){
         if(tvName.text.isNotEmpty() && tvMail.text.isNotEmpty() && tvNumber.text.isNotEmpty()){
             btnCreate.isEnabled = true
@@ -124,6 +126,7 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
+    // Set text in form on friend selection
     fun initializeText(friend: BEFriend){
         tvName.setText(friend.name)
         tvMail.setText(friend.mail)
@@ -144,8 +147,8 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-
-    fun createCustomer(view: View) {
+    // Creates friend entity and finishes activity
+    fun createFriend(view: View) {
         val name = tvName.text.toString()
         val mail = tvMail.text.toString()
         val number = tvNumber.text.toString()
@@ -160,7 +163,8 @@ class DetailActivity : AppCompatActivity() {
         finish()
     }
 
-    fun updateCustomer(view: View) {
+    // Updates friend entity and finishes activity
+    fun updateFriend(view: View) {
         friend.name = tvName.text.toString()
         friend.mail = tvMail.text.toString()
         friend.number = tvNumber.text.toString()
@@ -176,13 +180,15 @@ class DetailActivity : AppCompatActivity() {
         finish()
     }
 
-    fun deleteCustomer(view: View) {
+    // Deletes friend entity and finishes activity
+    fun deleteFriend(view: View) {
         val intent = Intent()
         intent.putExtra("FRIEND_DELETE", friend)
         setResult(IntentValues.RESPONSE_DETAIL_DELETE.code, intent)
         finish()
     }
 
+    // Open default mail app
     fun sendMail(){
         var emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "plain/text"
@@ -191,6 +197,7 @@ class DetailActivity : AppCompatActivity() {
         startActivity(emailIntent)
     }
 
+    // Open link in default browser
     fun goToLink(){
         var url = this.friend.url;
         if (!url!!.startsWith("http://") && !url.startsWith("https://")){url = "http://" + url}
@@ -198,6 +205,7 @@ class DetailActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+    // Open datepicker popup to select a birthdate
     fun openPopup(){
         DatePickerDialog(
             this, date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH],
@@ -205,12 +213,14 @@ class DetailActivity : AppCompatActivity() {
         ).show()
     }
 
+    // Sets the selected date in form
     private fun updateLabel() {
         val myFormat = "dd/MM/YYYY"
         val sdf = SimpleDateFormat(myFormat, Locale.GERMAN)
         tvBirthday.setText(sdf.format(myCalendar.time))
     }
 
+    // Checks permission to use camera app, if granted then camera dialog opens to select direct camera or camera app
     private fun checkCameraPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val permissions = mutableListOf<String>()
@@ -224,6 +234,7 @@ class DetailActivity : AppCompatActivity() {
             showCameraDialog()
     }
 
+    // Checks permission to use GPS location of the phone and if granted either uses GPS, Maps or Distance
     private fun checkGPSPermission(action: LocationAction){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val permissions = mutableListOf<String>()
@@ -254,6 +265,7 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
+    // Start the camera app
     private fun startCameraActivity() {
         mFile = getOutputMediaFile()
         if (mFile == null) {Toast.makeText(this, "Could not create file...", Toast.LENGTH_LONG).show(); return}
@@ -272,6 +284,7 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
+    // Check permission results and takes action if granted
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -301,6 +314,7 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
+    // Create file location for image to be taken
     private fun getOutputMediaFile(): File? {
         val mediaStorageDir = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Camera")
         if (!mediaStorageDir.exists()) {
@@ -315,6 +329,7 @@ class DetailActivity : AppCompatActivity() {
         return File(mediaStorageDir.path + File.separator + prefix + "_" + timeStamp + "." + postfix)
     }
 
+    // Inserts image in imageview when direct or app camera is done
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -325,6 +340,7 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
+    // Select use of direct or app camera
     private fun showCameraDialog() {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.setTitle("Camera Handling")
@@ -337,6 +353,7 @@ class DetailActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    // Start direct camera
     private fun startInCameraActivity(){
         mFile = getOutputMediaFile()
         if (mFile == null) {Toast.makeText(this, "Could not create file...", Toast.LENGTH_LONG).show(); return}
@@ -346,8 +363,8 @@ class DetailActivity : AppCompatActivity() {
         startActivityForResult(intent, IntentValues.REQUESTCODE_IMAGE_DIRECT.code)
     }
 
+    // Listener that sets text including position on top of button to display location
     var myLocationListener: LocationListener? = null
-
     @SuppressLint("MissingPermission")
     private fun setGPSLocation(){
 
@@ -367,8 +384,8 @@ class DetailActivity : AppCompatActivity() {
             mLocationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, myLocationListener!!)
     }
 
+    // Listener that calculates distance between current location and friend location
     var mLocationDistanceListener: LocationListener? = null
-
     @SuppressLint("MissingPermission")
     private fun calculateDistance(){
 
@@ -394,8 +411,8 @@ class DetailActivity : AppCompatActivity() {
         mLocationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, mLocationDistanceListener!!)
     }
 
+    // Calculates current location and open map activity to display current location and friend location
     var myLocationDistanceMapListener: LocationListener? = null
-
     @SuppressLint("MissingPermission")
     private fun openDistanceMap(){
 
@@ -423,6 +440,7 @@ class DetailActivity : AppCompatActivity() {
         mLocationManager!!.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, myLocationDistanceMapListener!!)
     }
 
+    // Stops listening to distance
     override fun onStop() {
         mLocationDistanceListener?.let { calculateDistance() }
         super.onStop()

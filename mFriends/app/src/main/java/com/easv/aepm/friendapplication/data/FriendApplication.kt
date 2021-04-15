@@ -5,7 +5,7 @@ import com.easv.aepm.friendapplication.DAL.FriendRepository
 
 class FriendApplication : Application() {
 
-    //On app startup get information from repository
+    //On app startup initialize repository
     override fun onCreate() {
         super.onCreate()
         FriendRepository.initialize(this)

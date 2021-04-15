@@ -35,19 +35,18 @@ import kotlinx.coroutines.async
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback{
 
-    private val TAG = "xyz"
-    private var lastSelectedMaker: Marker? = null
-    private val Denmark = LatLng(55.53411, 10.52368)
-    private var friends = mutableListOf<BEFriend>()
-    private var friendsName = mutableListOf("Select Friend")
-    private var userTouch = false
-    private lateinit var mMap: GoogleMap
-    private lateinit var friendRepository: FriendRepository
+    private var lastSelectedMaker: Marker? = null // Latest marker selected
+    private val Denmark = LatLng(55.53411, 10.52368) // Location for Denmark
+    private var friends = mutableListOf<BEFriend>() // Location of friends in a list
+    private var friendsName = mutableListOf("Select Friend") // Display of friends names in the friends list
+    private var userTouch = false // Boolean for spinner
+    private lateinit var mMap: GoogleMap // Google Maps
+    private lateinit var friendRepository: FriendRepository // Friend repository
 
-    private var mLocationManager: LocationManager? = null
-    private var locationListener: LocationListener? = null
+    private var mLocationManager: LocationManager? = null // Location manager for GPS tracking
+    private var locationListener: LocationListener? = null // Location listener for GPS
 
-
+    // Creates the map with map activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
@@ -62,6 +61,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
         })
         spSelection.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
 
+            // Actions for spinner select
             override fun onItemSelected(
                 parent: AdapterView<*>,
                 view: View?,
@@ -87,6 +87,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
         })
     }
 
+    // Sets the friends in the spinner list
     fun setSpinnerData(){
         val spinnerArrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this,
@@ -96,6 +97,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
         spSelection.adapter = spinnerArrayAdapter
     }
 
+    // When map is ready, sets marker(s) of friends location
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
 
@@ -167,6 +169,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
         }
     }
 
+    // Operation for create, update or delete to database
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -205,6 +208,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback{
         }
     }
 
+    // Stops listening for location updates
     override fun onStop() {
         locationListener?.let { mLocationManager?.removeUpdates(it) }
         super.onStop()
