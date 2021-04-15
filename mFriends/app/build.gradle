@@ -12,7 +12,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.easv.aepm.listviewrecylerview"
+        applicationId "com.easv.aepm.mFriends"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
