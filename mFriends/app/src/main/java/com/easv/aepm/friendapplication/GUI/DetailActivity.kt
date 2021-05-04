@@ -281,7 +281,6 @@ class DetailActivity : AppCompatActivity() {
         catch (e: ActivityNotFoundException){
             Toast.makeText(this, "Camera not found!", Toast.LENGTH_LONG).show()
         }
-
     }
 
     // Check permission results and takes action if granted

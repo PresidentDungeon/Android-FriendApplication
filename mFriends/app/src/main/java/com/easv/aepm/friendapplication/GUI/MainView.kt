@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.easv.aepm.friendapplication.DAL.FriendRepository
 import com.easv.aepm.friendapplication.R
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_main3.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+
 
 class MainView : AppCompatActivity(), IClickItemListener {
 
@@ -35,6 +37,8 @@ class MainView : AppCompatActivity(), IClickItemListener {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = RecyclerAdapter(this, this)
         recyclerView.adapter = adapter
+        val manager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = manager
 
     }
 
@@ -49,10 +53,18 @@ class MainView : AppCompatActivity(), IClickItemListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
-            R.id.create_friend -> { openCreateActivity(); true }
-            R.id.sortName -> {this.adapter.setSortingType(Sorting.SORTING_NAME); searchText(); true}
-            R.id.sortAge -> {this.adapter.setSortingType(Sorting.SORTING_AGE); searchText(); true}
-            R.id.openMap -> {openMapActivity(); true}
+            R.id.create_friend -> {
+                openCreateActivity(); true
+            }
+            R.id.sortName -> {
+                this.adapter.setSortingType(Sorting.SORTING_NAME); searchText(); true
+            }
+            R.id.sortAge -> {
+                this.adapter.setSortingType(Sorting.SORTING_AGE); searchText(); true
+            }
+            R.id.openMap -> {
+                openMapActivity(); true
+            }
 
             else -> super.onOptionsItemSelected(item)
         }
